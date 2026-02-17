@@ -1,0 +1,5 @@
+/* Import Noto Sans for multi-language support */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap');
+
+/* Import Poppins for display/hero text */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap');
