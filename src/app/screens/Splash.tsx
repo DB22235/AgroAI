@@ -1,25 +1,190 @@
-import { useState } from 'react';
+
+// import { useState, useEffect } from 'react';
+// import { useNavigate } from 'react-router';
+// import { motion } from 'motion/react';
+
+// const languages = [
+//   { code: 'hi', name: 'हिंदी', nameEn: 'Hindi' },
+//   { code: 'en', name: 'English', nameEn: 'English' },
+// ];
+
+// export function Splash() {
+//   const [selectedLanguage, setSelectedLanguage] = useState('hi');
+//   const [currentTime, setCurrentTime] = useState(new Date());
+//   const navigate = useNavigate();
+
+//   // Update time every second
+//   useEffect(() => {
+//     const timer = setInterval(() => {
+//       setCurrentTime(new Date());
+//     }, 1000);
+//     return () => clearInterval(timer);
+//   }, []);
+
+//   // Format time
+//   const formatTime = (date: Date) => {
+//     return date.toLocaleTimeString('en-US', {
+//       hour: '2-digit',
+//       minute: '2-digit',
+//       hour12: true,
+//     });
+//   };
+
+//   // Format date
+//   const formatDate = (date: Date) => {
+//     return date.toLocaleDateString('en-US', {
+//       weekday: 'short',
+//       day: 'numeric',
+//       month: 'short',
+//     });
+//   };
+
+//   const handleContinue = () => {
+//     navigate('/onboarding/profile');
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-[#1A3C1A] flex flex-col items-center justify-between px-8 py-12">
+//       {/* Top status bar - Just Time and Date */}
+//       <div className="w-full text-white text-xs flex justify-start items-start mb-8">
+//         <div className="flex flex-col">
+//           <span className="font-bold text-[14px]">{formatTime(currentTime)}</span>
+//           <span className="text-[11px] text-[#97BC62]">{formatDate(currentTime)}</span>
+//         </div>
+//       </div>
+
+//       {/* Logo and branding */}
+//       <motion.div
+//         initial={{ scale: 0.8, opacity: 0 }}
+//         animate={{ scale: 1, opacity: 1 }}
+//         transition={{ duration: 0.5 }}
+//         className="flex flex-col items-center mb-12"
+//       >
+//         <div className="w-28 h-28 mb-4 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-xl ring-4 ring-[#F5A623] ring-offset-2 ring-offset-[#1A3C1A]">
+//           <img
+//             src="/logo.png"
+//             alt="Krishi Mitra Logo"
+//             className="w-full h-full object-cover"
+//             onError={(e) => {
+//               e.currentTarget.style.display = 'none';
+//               e.currentTarget.parentElement!.innerHTML = '<span class="text-5xl">🌾</span>';
+//             }}
+//           />
+//         </div>
+//         <h1 className="font-display font-bold text-white text-[32px] text-center mb-2">
+//           कृषि मित्र
+//         </h1>
+//         <h2 className="font-display font-bold text-white text-[28px] text-center mb-3">
+//           Krishi Mitra
+//         </h2>
+//         <p className="text-[#97BC62] text-[16px] text-center">
+//           आपका सरकारी योजना सहायक
+//         </p>
+//         <p className="text-[#C8D8C8] text-[14px] text-center mt-1">
+//           Your Government Scheme Assistant
+//         </p>
+//       </motion.div>
+
+//       {/* Language selection */}
+//       <div className="w-full max-w-md flex-1 flex flex-col">
+//         <h3 className="text-white font-semibold text-[16px] text-center mb-6">
+//           Select Language / भाषा चुनें
+//         </h3>
+
+//         <div className="flex gap-6 justify-center mb-8">
+//           {languages.map((lang) => (
+//             <motion.button
+//               key={lang.code}
+//               onClick={() => setSelectedLanguage(lang.code)}
+//               whileHover={{ scale: 1.05 }}
+//               whileTap={{ scale: 0.95 }}
+//               className={`
+//                 w-36 h-20 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 relative
+//                 ${selectedLanguage === lang.code
+//                   ? 'bg-[#F5A623] text-[#1A3C1A] shadow-lg shadow-[#F5A623]/30'
+//                   : 'bg-[#2D6A2D]/50 border-2 border-[#2D6A2D] text-white hover:border-[#F5A623] hover:bg-[#2D6A2D]'
+//                 }
+//               `}
+//             >
+//               {selectedLanguage === lang.code && (
+//                 <motion.div
+//                   initial={{ scale: 0 }}
+//                   animate={{ scale: 1 }}
+//                   className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center"
+//                 >
+//                   <span className="text-[#1A3C1A] text-sm">✓</span>
+//                 </motion.div>
+//               )}
+
+//               <span
+//                 className={`text-[20px] font-bold leading-tight ${selectedLanguage === lang.code ? 'text-[#1A3C1A]' : 'text-white'
+//                   }`}
+//               >
+//                 {lang.name}
+//               </span>
+//               <span
+//                 className={`text-[12px] mt-1 font-medium ${selectedLanguage === lang.code ? 'text-[#1A3C1A]/70' : 'text-[#97BC62]'
+//                   }`}
+//               >
+//                 {lang.nameEn}
+//               </span>
+//             </motion.button>
+//           ))}
+//         </div>
+//       </div>
+
+//       {/* Continue button */}
+//       <motion.button
+//         onClick={handleContinue}
+//         whileHover={{ scale: 1.02 }}
+//         whileTap={{ scale: 0.98 }}
+//         className="w-full max-w-md bg-[#F5A623] text-[#1C1C1E] py-4 rounded-xl font-bold text-[16px] hover:bg-[#E09515] transition-colors shadow-lg shadow-[#F5A623]/20"
+//       >
+//         Continue / आगे बढ़ें
+//       </motion.button>
+//     </div>
+//   );
+// }
+
+// src/screens/Splash.tsx
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { motion } from 'motion/react';
+import { useLanguage } from '../../context/LanguageContext';
+// Logo is in public directory, referenced directly
 
 const languages = [
-  { code: 'hi', name: 'हिंदी', nameEn: 'Hindi' },
-  { code: 'ta', name: 'தமிழ்', nameEn: 'Tamil' },
-  { code: 'te', name: 'తెలుగు', nameEn: 'Telugu' },
-  { code: 'bn', name: 'বাংলা', nameEn: 'Bengali' },
-  { code: 'mr', name: 'मराठी', nameEn: 'Marathi' },
-  { code: 'gu', name: 'ગુજરાતી', nameEn: 'Gujarati' },
-  { code: 'kn', name: 'ಕನ್ನಡ', nameEn: 'Kannada' },
-  { code: 'ml', name: 'മലയാളം', nameEn: 'Malayalam' },
-  { code: 'pa', name: 'ਪੰਜਾਬੀ', nameEn: 'Punjabi' },
-  { code: 'or', name: 'ଓଡ଼ିଆ', nameEn: 'Odia' },
-  { code: 'as', name: 'অসমীয়া', nameEn: 'Assamese' },
-  { code: 'en', name: 'English', nameEn: 'English' },
+  { code: 'hi' as const, name: 'हिंदी', nameEn: 'Hindi' },
+  { code: 'en' as const, name: 'English', nameEn: 'English' },
 ];
 
 export function Splash() {
-  const [selectedLanguage, setSelectedLanguage] = useState('hi');
+  const { language, setLanguage, t } = useLanguage();
+  const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    });
+  };
 
   const handleContinue = () => {
     navigate('/onboarding/profile');
@@ -27,78 +192,100 @@ export function Splash() {
 
   return (
     <div className="min-h-screen bg-[#1A3C1A] flex flex-col items-center justify-between px-8 py-12">
-      {/* Top status bar simulation */}
-      <div className="w-full text-white text-xs flex justify-between mb-8">
-        <span>9:41</span>
-        <span>Airtel 4G • 82%</span>
+      {/* Top status bar */}
+      <div className="w-full text-white text-xs flex justify-start items-start mb-8">
+        <div className="flex flex-col">
+          <span className="font-bold text-[14px]">{formatTime(currentTime)}</span>
+          <span className="text-[11px] text-[#97BC62]">{formatDate(currentTime)}</span>
+        </div>
       </div>
 
       {/* Logo and branding */}
-      <motion.div 
+      <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
         className="flex flex-col items-center mb-12"
       >
-        <div className="w-20 h-20 mb-4 text-6xl flex items-center justify-center">
-          🌾
+        <div className="w-28 h-28 mb-4 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-xl ring-4 ring-[#F5A623] ring-offset-2 ring-offset-[#1A3C1A]">
+          <img
+            src="/logo.png"
+            alt="Krishi Mitra Logo"
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.parentElement!.innerHTML = '<span class="text-5xl">🌾</span>';
+            }}
+          />
         </div>
         <h1 className="font-display font-bold text-white text-[32px] text-center mb-2">
-          कृषि मित्र
+          {t('Krishi Mitra')}
         </h1>
-        <h2 className="font-display font-bold text-white text-[28px] text-center mb-3">
-          Krishi Mitra
-        </h2>
         <p className="text-[#97BC62] text-[16px] text-center">
-          आपका सरकारी योजना सहायक
-        </p>
-        <p className="text-[#C8D8C8] text-[14px] text-center mt-1">
-          Your Government Scheme Assistant
+          {t('Your Government Scheme Assistant')}
         </p>
       </motion.div>
 
       {/* Language selection */}
       <div className="w-full max-w-md flex-1 flex flex-col">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-white font-semibold text-[16px]">
-            Select Language / भाषा चुनें
-          </h3>
-          <div className="bg-[#97BC62] px-3 py-1 rounded-full text-[11px] text-[#1A3C1A] font-medium">
-            Auto Detect ON
-          </div>
-        </div>
+        <h3 className="text-white font-semibold text-[16px] text-center mb-6">
+          {t('Select Language')}
+        </h3>
 
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        <div className="flex gap-6 justify-center mb-8">
           {languages.map((lang) => (
-            <button
+            <motion.button
               key={lang.code}
-              onClick={() => setSelectedLanguage(lang.code)}
+              onClick={() => setLanguage(lang.code)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               className={`
-                h-12 rounded-xl flex flex-col items-center justify-center transition-all
-                ${selectedLanguage === lang.code
-                  ? 'bg-[#F5A623] bg-opacity-20 border-2 border-[#F5A623] text-[#F5A623]'
-                  : 'bg-transparent border-2 border-[#2D6A2D] text-white'
+                w-36 h-20 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 relative
+                ${
+                  language === lang.code
+                    ? 'bg-[#F5A623] text-[#1A3C1A] shadow-lg shadow-[#F5A623]/30'
+                    : 'bg-[#2D6A2D]/50 border-2 border-[#2D6A2D] text-white hover:border-[#F5A623] hover:bg-[#2D6A2D]'
                 }
               `}
             >
-              <span className="text-[14px] font-medium leading-tight">
+              {language === lang.code && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center"
+                >
+                  <span className="text-[#1A3C1A] text-sm">✓</span>
+                </motion.div>
+              )}
+
+              <span
+                className={`text-[20px] font-bold leading-tight ${
+                  language === lang.code ? 'text-[#1A3C1A]' : 'text-white'
+                }`}
+              >
                 {lang.name}
               </span>
-              <span className="text-[9px] opacity-70 leading-tight">
+              <span
+                className={`text-[12px] mt-1 font-medium ${
+                  language === lang.code ? 'text-[#1A3C1A]/70' : 'text-[#97BC62]'
+                }`}
+              >
                 {lang.nameEn}
               </span>
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
 
       {/* Continue button */}
-      <button
+      <motion.button
         onClick={handleContinue}
-        className="w-full max-w-md bg-[#F5A623] text-[#1C1C1E] py-4 rounded-xl font-bold text-[16px] hover:bg-[#E09515] transition-colors"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className="w-full max-w-md bg-[#F5A623] text-[#1C1C1E] py-4 rounded-xl font-bold text-[16px] hover:bg-[#E09515] transition-colors shadow-lg shadow-[#F5A623]/20"
       >
-        Continue / आगे बढ़ें
-      </button>
+        {t('Continue')}
+      </motion.button>
     </div>
   );
 }
