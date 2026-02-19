@@ -1,14 +1,32 @@
-import { useState } from 'react';
-import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Edit2, CheckCircle, AlertCircle, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router';
-import { BottomNav } from '../components/BottomNav';
+import { useCallback, useState } from "react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  ChevronDown,
+  ChevronRight,
+  ChevronUp,
+  Edit2,
+  LogOut,
+} from "lucide-react";
+import { useNavigate } from "react-router";
+import { BottomNav } from "../components/BottomNav";
+import { useDocumentUpload, type DocumentKey } from "../hooks/useDocumentUpload";
+import { Toaster } from "../components/ui/sonner";
+import { toast } from "sonner";
 
 export function Profile() {
   const navigate = useNavigate();
-  const [expandedSection, setExpandedSection] = useState<string>('');
+  const [expandedSection, setExpandedSection] = useState<string>("");
+
+  const handleValidationError = useCallback((message: string) => {
+    toast.error(message);
+  }, []);
+
+  const { documents, inputRefs, handleCardClick, handleFileChange } =
+    useDocumentUpload(handleValidationError);
 
   const toggleSection = (section: string) => {
-    setExpandedSection(expandedSection === section ? '' : section);
+    setExpandedSection(expandedSection === section ? "" : section);
   };
 
   const profileCompletion = 78;
@@ -44,15 +62,26 @@ export function Profile() {
     { label: 'Bank', labelHi: 'बैंक', value: 'State Bank of India ✅' },
   ];
 
-  const documents = [
-    { name: 'Aadhaar Card', nameHi: 'आधार कार्ड', status: 'uploaded', verified: true },
-    { name: 'Land Records', nameHi: 'भूमि रिकॉर्ड', status: 'uploaded', verified: true },
-    { name: 'Bank Passbook', nameHi: 'बैंक पासबुक', status: 'uploaded', verified: false, warning: 'Expired?' },
-    { name: 'Passport Photo', nameHi: 'पासपोर्ट फोटो', status: 'uploaded', verified: true },
+  const documentMeta: {
+    key: DocumentKey;
+    name: string;
+    nameHi: string;
+    warning?: string;
+  }[] = [
+    { key: "aadhaar", name: "Aadhaar Card", nameHi: "आधार कार्ड" },
+    { key: "land", name: "Land Records", nameHi: "भूमि रिकॉर्ड" },
+    {
+      key: "bank",
+      name: "Bank Passbook",
+      nameHi: "बैंक पासबुक",
+      warning: "Expired?",
+    },
+    { key: "photo", name: "Passport Photo", nameHi: "पासपोर्ट फोटो" },
   ];
 
   return (
     <div className="min-h-screen bg-[#F7F3EE] pb-20">
+      <Toaster richColors closeButton />
       {/* Header */}
       <div className="bg-[#1A3C1A] pt-3 pb-12 px-4">
         <button onClick={() => navigate('/dashboard')} className="mb-4">
@@ -281,26 +310,142 @@ export function Profile() {
           {expandedSection === 'documents' && (
             <div className="px-4 pb-4 border-t border-gray-100 pt-3">
               <div className="grid grid-cols-2 gap-2 mb-3">
-                {documents.map((doc, index) => (
-                  <div 
-                    key={index} 
-                    className={`rounded-xl p-3 text-center ${
-                      doc.verified ? 'bg-[#F0FDF4] border border-[#97BC62]' : 
-                      doc.warning ? 'bg-[#FFF4E6] border border-[#FB923C]' : 
-                      'bg-gray-50 border border-gray-200'
-                    }`}
-                  >
-                    <div className="text-2xl mb-1">
-                      {doc.verified ? '✅' : doc.warning ? '⚠️' : '📄'}
+                {documentMeta.map((meta) => {
+                  const state = documents[meta.key];
+                  const isUploading = state.status === "uploading";
+                  const isSuccess = state.status === "success";
+                  const isError = state.status === "error";
+                  const isExpired = !!meta.warning && isSuccess;
+                  const borderColor = isError
+                    ? "border-red-400 bg-red-50"
+                    : isExpired
+                    ? "border-[#FB923C] bg-[#FFF4E6]"
+                    : isSuccess
+                    ? "border-[#97BC62] bg-[#F0FDF4]"
+                    : "border-gray-200 bg-gray-50";
+
+                  const icon = isUploading
+                    ? "⏳"
+                    : isError
+                    ? "⚠️"
+                    : isSuccess
+                    ? "✅"
+                    : "📷";
+
+                  const isImagePreview = !!state.previewUrl;
+
+                  const fileSizeMb =
+                    state.file && state.file.size
+                      ? (state.file.size / (1024 * 1024)).toFixed(1)
+                      : undefined;
+
+                  return (
+                    <div key={meta.key} className="space-y-1">
+                      <button
+                        type="button"
+                        onClick={() => handleCardClick(meta.key)}
+                        className={`w-full rounded-xl p-3 text-left border transition hover:shadow-sm hover:border-[#1A3C1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1A3C1A] ${borderColor}`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <span className="text-lg">{icon}</span>
+                              <p className="text-[11px] text-[#1C1C1E] font-medium">
+                                {meta.nameHi}
+                              </p>
+                            </div>
+
+                            {!state.file && (
+                              <p className="text-[10px] text-[#6B7280]">
+                                Tap to upload {meta.name}. JPG, PNG or PDF (max
+                                5MB)
+                              </p>
+                            )}
+
+                            {state.file && (
+                              <div className="mt-1">
+                                <p className="text-[10px] text-[#374151] truncate">
+                                  {state.file.name}
+                                </p>
+                                {fileSizeMb && (
+                                  <p className="text-[9px] text-[#6B7280]">
+                                    {fileSizeMb} MB
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            {isUploading && (
+                              <div className="mt-2">
+                                <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-[#F5A623] transition-all"
+                                    style={{ width: `${state.progress}%` }}
+                                  />
+                                </div>
+                                <p className="text-[9px] text-[#6B7280] mt-1">
+                                  Uploading... {state.progress}%
+                                </p>
+                              </div>
+                            )}
+
+                            {isSuccess && (
+                              <p className="text-[9px] text-[#16A34A] mt-1">
+                                Uploaded successfully
+                                {state.uploadedAt
+                                  ? ` • ${state.uploadedAt.toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}`
+                                  : ""}
+                              </p>
+                            )}
+
+                            {isError && state.error && (
+                              <p className="text-[9px] text-red-500 mt-1">
+                                {state.error}
+                              </p>
+                            )}
+
+                            {meta.warning && isSuccess && (
+                              <p className="text-[9px] text-[#FB923C] mt-1 flex items-center gap-1">
+                                <AlertCircle className="w-3 h-3" />
+                                {meta.warning}
+                              </p>
+                            )}
+                          </div>
+
+                          {isImagePreview && (
+                            <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={state.previewUrl}
+                                alt={meta.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {state.file && !isUploading && (
+                          <div className="mt-2 flex justify-end">
+                            <span className="text-[10px] text-[#1A3C1A] font-medium underline">
+                              Change
+                            </span>
+                          </div>
+                        )}
+                      </button>
+
+                      <input
+                        ref={inputRefs[meta.key]}
+                        type="file"
+                        accept="image/*,application/pdf"
+                        className="hidden"
+                        onChange={(e) => handleFileChange(meta.key, e)}
+                      />
                     </div>
-                    <p className="text-[11px] text-[#1C1C1E] font-medium mb-0.5">
-                      {doc.nameHi}
-                    </p>
-                    {doc.warning && (
-                      <p className="text-[9px] text-[#FB923C]">{doc.warning}</p>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               <button className="w-full border-2 border-dashed border-gray-300 rounded-xl py-3 text-[13px] text-[#6B7280] font-medium">
                 + Add Document
